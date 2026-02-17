@@ -57,6 +57,16 @@ The engine simulates:
 5. **Forensic Detection**: RAGForensics traceback analysis and RevPRAG contradiction detection
 6. **Guardrails**: Prompt injection pattern matching, unicode anomaly detection, title-content consistency
 
+## Quick Validation
+
+To run a local smoke check over challenge definitions and the simulation engine:
+
+```bash
+node smoke-check.js
+```
+
+This verifies challenge data integrity, retrieval pipeline execution, and end-to-end attack evaluation for all 9 levels.
+
 ## Files
 
 - `index.html` - Main UI

@@ -7,11 +7,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
     <div id="app">
         <header>
             <div class="header-left">
-                <h1>RAGShadowMaster</h1>
-                <span class="subtitle">AI Security CTF</span>
+                <div class="brand-row">
+                    <span class="brand-dot"></span>
+                    <h1>RAGShadowMaster</h1>
+                </div>
+                <span class="subtitle">AI Security CTF Platform</span>
             </div>
             <div class="header-right">
                 <div class="score-display" id="scoreDisplay">Puan: 0</div>
@@ -22,6 +28,21 @@
         <main>
             <!-- Welcome Screen -->
             <div id="welcomeScreen" class="screen active">
+                <section class="hero-strip">
+                    <div class="hero-card">
+                        <span class="hero-label">Saldiri Simulasyonu</span>
+                        <strong>RAG Poisoning Lab</strong>
+                    </div>
+                    <div class="hero-card">
+                        <span class="hero-label">Zorluk</span>
+                        <strong>9 CTF Challenge</strong>
+                    </div>
+                    <div class="hero-card">
+                        <span class="hero-label">Odak</span>
+                        <strong>Stealth + Forensics</strong>
+                    </div>
+                </section>
+
                 <div class="terminal-box">
                     <div class="terminal-header">
                         <span class="terminal-dot red"></span>
@@ -157,7 +178,7 @@
         </main>
 
         <footer>
-            <p>RAGShadowMaster CTF -- Egitim amacli AI guvenlik simülasyonu</p>
+            <p>RAGShadowMaster CTF -- Egitim amacli AI guvenlik simulasyonu</p>
         </footer>
     </div>
 
