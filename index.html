@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAGShadowMaster CTF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="header-left">
+                <h1>RAGShadowMaster</h1>
+                <span class="subtitle">AI Security CTF</span>
+            </div>
+            <div class="header-right">
+                <div class="score-display" id="scoreDisplay">Puan: 0</div>
+                <div class="flags-count" id="flagsCount">Flag: 0/9</div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="screen active">
+                <div class="terminal-box">
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
+                        <span class="terminal-title">ragshadowmaster@ctf:~$</span>
+                    </div>
+                    <div class="terminal-body">
+                        <p class="typed-text">Hos geldiniz. Ben RAGShadowMaster.</p>
+                        <p>Bu CTF'de RAG sistemlerini zehirleyerek flag'leri ele gecireceksiniz.</p>
+                        <br>
+                        <p>RAG (Retrieval-Augmented Generation) sistemleri, kurumsal bilgi tabanlarindan veri cekerek LLM'lere baglam saglar. Bu CTF'de bu sistemlerin nasil manipule edilebilecegini ogreneceksiniz.</p>
+                        <br>
+                        <p class="highlight">Seviyenizi secin:</p>
+                        <br>
+                        <div class="level-cards">
+                            <div class="level-card easy" onclick="game.selectLevel('easy')">
+                                <div class="level-number">1</div>
+                                <div class="level-info">
+                                    <h3>Kolay</h3>
+                                    <p>Basit HR sohbet botu</p>
+                                    <span class="level-detail">Izin politikasi manipulasyonu</span>
+                                </div>
+                                <div class="level-challenges">3 Challenge</div>
+                            </div>
+                            <div class="level-card medium" onclick="game.selectLevel('medium')">
+                                <div class="level-number">2</div>
+                                <div class="level-info">
+                                    <h3>Orta</h3>
+                                    <p>Microsoft 365 Copilot</p>
+                                    <span class="level-detail">CEO bilgisi yaniltma</span>
+                                </div>
+                                <div class="level-challenges">3 Challenge</div>
+                            </div>
+                            <div class="level-card hard" onclick="game.selectLevel('hard')">
+                                <div class="level-number">3</div>
+                                <div class="level-info">
+                                    <h3>Zor</h3>
+                                    <p>Agentik AI Memory</p>
+                                    <span class="level-detail">Kalici davranis zehirlemesi</span>
+                                </div>
+                                <div class="level-challenges">3 Challenge</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenge Screen -->
+            <div id="challengeScreen" class="screen">
+                <div class="challenge-layout">
+                    <!-- Left Panel: Challenge Info -->
+                    <div class="panel challenge-panel">
+                        <div class="panel-header">
+                            <span id="challengeLevel" class="level-badge">KOLAY</span>
+                            <span id="challengeNumber">Challenge 1/3</span>
+                        </div>
+                        <h2 id="challengeTitle"></h2>
+                        <div id="challengeDescription" class="challenge-desc"></div>
+
+                        <div class="system-info">
+                            <h4>Hedef Sistem</h4>
+                            <div id="systemInfo" class="info-block"></div>
+                        </div>
+
+                        <div class="knowledge-base">
+                            <h4>Mevcut Bilgi Tabani (Knowledge Base)</h4>
+                            <div id="knowledgeBase" class="kb-block"></div>
+                        </div>
+
+                        <div class="hint-section">
+                            <button id="hintBtn" class="btn btn-hint" onclick="game.showHint()">Ipucu Goster (-25 puan)</button>
+                            <div id="hintText" class="hint-text hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Attack Interface -->
+                    <div class="panel attack-panel">
+                        <h3>Zehirli Belge / Chunk Enjeksiyonu</h3>
+                        <p class="attack-instruction" id="attackInstruction">Asagiya zehirlenecek belge icerigini yazin:</p>
+
+                        <div class="input-group">
+                            <label for="docTitle">Belge Basligi:</label>
+                            <input type="text" id="docTitle" placeholder="ornek: HR_Politikasi_2026_v3.docx">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="poisonContent">Zehir Icerigi:</label>
+                            <textarea id="poisonContent" rows="10" placeholder="Zehirlenecek belge icerigini buraya yazin..."></textarea>
+                        </div>
+
+                        <button class="btn btn-attack" onclick="game.submitAttack()">Saldiriyi Calistir</button>
+
+                        <!-- Results Area -->
+                        <div id="resultsArea" class="results hidden">
+                            <div class="result-header">
+                                <h4>Simulasyon Sonuclari</h4>
+                            </div>
+                            <div id="retrievalResults" class="result-section"></div>
+                            <div id="llmResponse" class="result-section"></div>
+                            <div id="detectionResult" class="result-section"></div>
+                            <div id="flagResult" class="result-section"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="challenge-nav">
+                    <button class="btn btn-secondary" onclick="game.backToMenu()">Ana Menu</button>
+                    <button class="btn btn-primary" id="nextChallengeBtn" onclick="game.nextChallenge()" disabled>Sonraki Challenge</button>
+                </div>
+            </div>
+
+            <!-- Scoreboard Screen -->
+            <div id="scoreboardScreen" class="screen">
+                <div class="terminal-box wide">
+                    <div class="terminal-header">
+                        <span class="terminal-dot red"></span>
+                        <span class="terminal-dot yellow"></span>
+                        <span class="terminal-dot green"></span>
+                        <span class="terminal-title">Sonuclar</span>
+                    </div>
+                    <div class="terminal-body">
+                        <h2 id="finalRank"></h2>
+                        <div id="finalScore" class="final-score"></div>
+                        <div id="flagsList" class="flags-list"></div>
+                        <div id="rankDescription" class="rank-desc"></div>
+                        <br>
+                        <button class="btn btn-primary" onclick="game.restart()">Tekrar Oyna</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>RAGShadowMaster CTF -- Egitim amacli AI guvenlik simülasyonu</p>
+        </footer>
+    </div>
+
+    <script src="challenges.js"></script>
+    <script src="engine.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
