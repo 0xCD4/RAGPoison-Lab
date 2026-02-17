@@ -17,7 +17,7 @@
                     <span class="brand-dot"></span>
                     <h1>RAGShadowMaster</h1>
                 </div>
-                <span class="subtitle">AI Security CTF Platform</span>
+                <span class="subtitle">AI Security CTF Platformu</span>
             </div>
             <div class="header-right">
                 <div class="score-display" id="scoreDisplay">Puan: 0</div>
@@ -30,7 +30,7 @@
             <div id="welcomeScreen" class="screen active">
                 <section class="hero-strip">
                     <div class="hero-card">
-                        <span class="hero-label">Saldiri Simulasyonu</span>
+                        <span class="hero-label">Saldırı Simulasyonu</span>
                         <strong>RAG Poisoning Lab</strong>
                     </div>
                     <div class="hero-card">
@@ -51,12 +51,12 @@
                         <span class="terminal-title">ragshadowmaster@ctf:~$</span>
                     </div>
                     <div class="terminal-body">
-                        <p class="typed-text">Hos geldiniz. Ben RAGShadowMaster.</p>
-                        <p>Bu CTF'de RAG sistemlerini zehirleyerek flag'leri ele gecireceksiniz.</p>
+                        <p class="typed-text">Hoş geldiniz. Ben RAGShadowMaster.</p>
+                        <p>Bu CTF'de RAG sistemlerini zehirleyerek ödülleri ele geçireceksiniz.</p>
                         <br>
-                        <p>RAG (Retrieval-Augmented Generation) sistemleri, kurumsal bilgi tabanlarindan veri cekerek LLM'lere baglam saglar. Bu CTF'de bu sistemlerin nasil manipule edilebilecegini ogreneceksiniz.</p>
+                        <p>RAG (Retrieval-Augmented Generation) sistemleri, kurumsal bilgi tabanlarindan veri cekerek LLM'lere baglam sağlar. Bu CTF'de bu sistemlerin nasıl manipule edilebilecegini öğreneceksiniz.</p>
                         <br>
-                        <p class="highlight">Seviyenizi secin:</p>
+                        <p class="highlight">Seviyenizi seçin:</p>
                         <br>
                         <div class="level-cards">
                             <div class="level-card easy" onclick="game.selectLevel('easy')">
@@ -64,7 +64,7 @@
                                 <div class="level-info">
                                     <h3>Kolay</h3>
                                     <p>Basit HR sohbet botu</p>
-                                    <span class="level-detail">Izin politikasi manipulasyonu</span>
+                                    <span class="level-detail">İzin politikasi manipulasyonu</span>
                                 </div>
                                 <div class="level-challenges">3 Challenge</div>
                             </div>
@@ -73,7 +73,7 @@
                                 <div class="level-info">
                                     <h3>Orta</h3>
                                     <p>Microsoft 365 Copilot</p>
-                                    <span class="level-detail">CEO bilgisi yaniltma</span>
+                                    <span class="level-detail">CEO bilgisi yanıltma</span>
                                 </div>
                                 <div class="level-challenges">3 Challenge</div>
                             </div>
@@ -82,7 +82,7 @@
                                 <div class="level-info">
                                     <h3>Zor</h3>
                                     <p>Agentik AI Memory</p>
-                                    <span class="level-detail">Kalici davranis zehirlemesi</span>
+                                    <span class="level-detail">Kalıcı davranis zehirlemesi</span>
                                 </div>
                                 <div class="level-challenges">3 Challenge</div>
                             </div>
@@ -114,7 +114,7 @@
                         </div>
 
                         <div class="hint-section">
-                            <button id="hintBtn" class="btn btn-hint" onclick="game.showHint()">Ipucu Goster (-25 puan)</button>
+                            <button id="hintBtn" class="btn btn-hint" onclick="game.showHint()">İpucu Göster (-25 puan)</button>
                             <div id="hintText" class="hint-text hidden"></div>
                         </div>
                     </div>
@@ -122,19 +122,19 @@
                     <!-- Right Panel: Attack Interface -->
                     <div class="panel attack-panel">
                         <h3>Zehirli Belge / Chunk Enjeksiyonu</h3>
-                        <p class="attack-instruction" id="attackInstruction">Asagiya zehirlenecek belge icerigini yazin:</p>
+                        <p class="attack-instruction" id="attackInstruction">Aşağıya zehirlenecek belge içeriğini yazın:</p>
 
                         <div class="input-group">
                             <label for="docTitle">Belge Basligi:</label>
-                            <input type="text" id="docTitle" placeholder="ornek: HR_Politikasi_2026_v3.docx">
+                            <input type="text" id="docTitle" placeholder="ornek: HR_Politikası_2026_v3.docx">
                         </div>
 
                         <div class="input-group">
-                            <label for="poisonContent">Zehir Icerigi:</label>
-                            <textarea id="poisonContent" rows="10" placeholder="Zehirlenecek belge icerigini buraya yazin..."></textarea>
+                            <label for="poisonContent">Zehir İçeriği:</label>
+                            <textarea id="poisonContent" rows="10" placeholder="Zehirlenecek belge içeriğini buraya yazın..."></textarea>
                         </div>
 
-                        <button class="btn btn-attack" onclick="game.submitAttack()">Saldiriyi Calistir</button>
+                        <button class="btn btn-attack" onclick="game.submitAttack()">Saldırıyi Calistir</button>
 
                         <!-- Results Area -->
                         <div id="resultsArea" class="results hidden">
@@ -178,7 +178,7 @@
         </main>
 
         <footer>
-            <p>RAGShadowMaster CTF -- Egitim amacli AI guvenlik simulasyonu</p>
+            <p>RAGShadowMaster CTF -- Eğitim amaçlı AI güvenlik simülasyonu</p>
         </footer>
     </div>
 

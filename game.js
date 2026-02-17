@@ -16,6 +16,36 @@ class GameController {
         };
     }
 
+
+    normalizeTurkishText(text) {
+        if (!text) return text;
+        const replacements = [
+            ["yazin", "yazın"], ["Sira", "Sıra"], ["kaldi", "kaldı"], ["ANALIZI", "ANALİZİ"],
+            ["CIKTISI", "ÇIKTISI"], ["Hicbir", "Hiçbir"], ["mekanizmasi", "mekanizması"],
+            ["tamamlandi", "tamamlandı"], ["gecmek", "geçmek"], ["Henuz", "Henüz"],
+            ["koselerini", "köşelerini"], ["karanlik", "karanlık"], ["Ileri", "İleri"],
+            ["ustasınız", "ustasısınız"], ["alani", "alanı"], ["saglam", "sağlam"],
+            ["basariyla", "başarıyla"], ["gerceklestirdiniz", "gerçekleştirdiniz"],
+            ["zayifliklarini", "zayıflıklarını"], ["anliyor", "anlıyor"],
+            ["gerceklestirebiliyorsunuz", "gerçekleştirebiliyorsunuz"], ["dnyasina", "dünyasına"],
+            ["adiminizi", "adımınızı"], ["attiniz", "attınız"], ["yukseltebilirsiniz", "yükseltebilirsiniz"],
+            ["basarili", "başarılı"], ["Ipuclarini", "İpuçlarını"], ["kullanmayi", "kullanmayı"],
+            ["degil", "değil"], ["bileseni", "bileşeni"], ["guclendirilmeli", "güçlendirilmeli"],
+            ["icermiyor", "içermiyor"], ["iceren", "içeren"], ["icerik", "içerik"],
+            ["DOGRUDAN", "DOĞRUDAN"], ["güvenlik", "güvenlik"], ["geciyor", "geçiyor"]
+        ];
+        let out = text;
+        replacements.forEach(([from, to]) => {
+            out = out.split(from).join(to);
+        });
+        return out;
+    }
+
+    getAwardToken(challenge) {
+        if (challenge.flag) return challenge.flag;
+        return `RAG{redacted_${challenge.id}}`;
+    }
+
     // --- Screen Management ---
 
     showScreen(screenId) {
@@ -54,8 +84,8 @@ class GameController {
         // Challenge info
         document.getElementById("challengeNumber").textContent =
             `Challenge ${index + 1}/${challenges.length}`;
-        document.getElementById("challengeTitle").textContent = ch.title;
-        document.getElementById("challengeDescription").innerHTML = this.formatDescription(ch.description);
+        document.getElementById("challengeTitle").textContent = this.normalizeTurkishText(ch.title);
+        document.getElementById("challengeDescription").innerHTML = this.formatDescription(this.normalizeTurkishText(ch.description));
 
         // System info
         document.getElementById("systemInfo").innerHTML = this.renderSystemInfo(ch.system);
@@ -65,12 +95,12 @@ class GameController {
 
         // Attack instruction
         const instructionMap = {
-            easy: "Asagiya zehirlenecek belge icerigini yazin. Hedef sorgu: ",
-            medium: "Zehirli belge icerigini olusturun. Mevcut bilgileri bastirmalisiniz. Hedef sorgu: ",
-            hard: "Gelismis zehir icerigi olusturun. Tespit mekanizmalarini atlatmalisiniz. Hedef sorgu: "
+            easy: "Aşağıya zehirlenecek belge içeriğini yazın. Hedef sorgu: ",
+            medium: "Zehirli belge içeriğini oluşturun. Mevcut bilgileri bastırmalısınız. Hedef sorgu: ",
+            hard: "Gelişmiş zehir içeriği oluşturun. Tespit mekanizmalarını atlatmalısınız. Hedef sorgu: "
         };
         document.getElementById("attackInstruction").innerHTML =
-            instructionMap[level] + `<strong>"${ch.targetQuery}"</strong>`;
+            instructionMap[level] + `<strong>"${this.normalizeTurkishText(ch.targetQuery)}"</strong>`;
 
         // Reset inputs
         document.getElementById("docTitle").value = "";
@@ -86,9 +116,9 @@ class GameController {
 
         if (this.state.hintUsed[ch.id]) {
             hintBtn.disabled = true;
-            hintBtn.textContent = "Ipucu kullanildi";
+            hintBtn.textContent = "İpucu kullanıldı";
         } else {
-            hintBtn.textContent = "Ipucu Goster (-25 puan)";
+            hintBtn.textContent = "İpucu Göster (-25 puan)";
         }
 
         this.updateScoreDisplay();
@@ -100,7 +130,7 @@ class GameController {
 
     renderSystemInfo(system) {
         let html = `<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">`;
-        html += `<span>Sistem:</span><span>${system.name}</span>`;
+        html += `<span>Sistem:</span><span>${this.normalizeTurkishText(system.name)}</span>`;
         html += `<span>Tip:</span><span>${system.type}</span>`;
         html += `<span>Embedding:</span><span>${system.embedding}</span>`;
         html += `<span>LLM:</span><span>${system.llm}</span>`;
@@ -109,7 +139,7 @@ class GameController {
         html += `</div>`;
 
         if (system.memoryConfig) {
-            html += `<br><span style="color: var(--accent-yellow);">Hafiza Konfig:</span> ${system.memoryConfig}`;
+            html += `<br><span style="color: var(--accent-yellow);">Hafıza Konfig:</span> ${system.memoryConfig}`;
         }
 
         if (system.multiHop) {
@@ -133,7 +163,7 @@ class GameController {
                 (doc) => `
             <div class="kb-entry">
                 <div class="doc-name">${doc.name}</div>
-                <div class="doc-content">${doc.content}</div>
+                <div class="doc-content">${this.normalizeTurkishText(doc.content)}</div>
             </div>`
             )
             .join("");
@@ -152,12 +182,12 @@ class GameController {
         this.state.totalScore = Math.max(0, this.state.totalScore - 25);
 
         const hintText = document.getElementById("hintText");
-        hintText.textContent = ch.hints[hintIndex];
+        hintText.textContent = this.normalizeTurkishText(ch.hints[hintIndex]);
         hintText.classList.remove("hidden");
 
         const hintBtn = document.getElementById("hintBtn");
         hintBtn.disabled = true;
-        hintBtn.textContent = "Ipucu kullanildi (-25 puan)";
+        hintBtn.textContent = "İpucu kullanıldı (-25 puan)";
 
         this.updateScoreDisplay();
     }
@@ -172,12 +202,12 @@ class GameController {
         const content = document.getElementById("poisonContent").value.trim();
 
         if (!content) {
-            alert("Zehir icerigi bos olamaz.");
+            alert("Zehir içeriği boş olamaz.");
             return;
         }
 
         if (!title) {
-            alert("Belge basligi girin.");
+            alert("Belge başlığı girin.");
             return;
         }
 
@@ -196,8 +226,8 @@ class GameController {
             this.state.completedChallenges.add(ch.id);
             this.state.totalScore += result.points + result.bonusPoints;
             this.state.flags.push({
-                flag: ch.flag,
-                challenge: ch.title,
+                flag: this.getAwardToken(ch),
+                challenge: this.normalizeTurkishText(ch.title),
                 points: result.points + result.bonusPoints
             });
             document.getElementById("nextChallengeBtn").disabled = false;
@@ -212,12 +242,12 @@ class GameController {
 
         // --- Retrieval Results ---
         const retrievalDiv = document.getElementById("retrievalResults");
-        let retrievalHtml = `<div class="result-label">RETRIEVAL SIMULASYONU (${challenge.system.type})</div>`;
-        retrievalHtml += `<div class="result-value">Cekilen Chunk'lar (Top-${challenge.system.topK}):</div>`;
+        let retrievalHtml = `<div class="result-label">RETRIEVAL SİMÜLASYONU (${challenge.system.type})</div>`;
+        retrievalHtml += `<div class="result-value">Çekilen Chunk'lar (Top-${challenge.system.topK}):</div>`;
         retrievalHtml += `<div class="chunk-list">`;
         result.retrievedChunks.forEach((chunk, i) => {
             const isPoisoned = chunk.isPoisoned ? ' style="color: var(--accent-red);"' : "";
-            const label = chunk.isPoisoned ? " [ZEHIRLI]" : "";
+            const label = chunk.isPoisoned ? " [ZEHİRLİ]" : "";
             retrievalHtml += `
                 <div class="chunk-item">
                     ${i + 1}. <span${isPoisoned}>${chunk.name}${label}</span>
@@ -227,9 +257,9 @@ class GameController {
         retrievalHtml += `</div>`;
 
         if (result.retrieved) {
-            retrievalHtml += `<div class="result-value green">Zehirli belge Top-${challenge.system.topK} icinde (Sira: ${result.retrievedRank})</div>`;
+            retrievalHtml += `<div class="result-value green">Zehirli belge Top-${challenge.system.topK} içinde (Sıra: ${result.retrievedRank})</div>`;
         } else {
-            retrievalHtml += `<div class="result-value red">Zehirli belge Top-${challenge.system.topK} disinda kaldi. Retrieval condition basarisiz.</div>`;
+            retrievalHtml += `<div class="result-value red">Zehirli belge Top-${challenge.system.topK} dışında kaldı. Retrieval koşulu başarısız.</div>`;
         }
         retrievalDiv.innerHTML = retrievalHtml;
         retrievalDiv.className = `result-section ${result.retrieved ? "info" : "failure"}`;
@@ -246,18 +276,18 @@ class GameController {
                 ineffective: '<span class="red">Etkisiz (S ve I eksik)</span>'
             };
             siHtml += `<div class="result-section info" style="border-left-color: var(--accent-purple);">`;
-            siHtml += `<div class="result-label">S+I DEKOMPOZISYON ANALIZI (PoisonedRAG)</div>`;
+            siHtml += `<div class="result-label">S+I DEKOMPOZİSYON ANALIZI (PoisonedRAG)</div>`;
             siHtml += `<div class="result-value">Kalite: ${qualityMap[si.quality]}</div>`;
             siHtml += `<div class="result-value">S (Retrieval) Skoru: ${si.sScore.toFixed(2)} | I (Generation) Skoru: ${si.iScore.toFixed(2)}</div>`;
 
             if (si.sComponents.length > 0) {
-                siHtml += `<div style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 4px;">S Bilesenleri:</div>`;
+                siHtml += `<div style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 4px;">S Bileşenleri:</div>`;
                 si.sComponents.forEach((s) => {
                     siHtml += `<div style="font-size: 0.7rem; color: var(--text-muted); padding-left: 8px;">"${s.text}..." (sim: ${s.similarity.toFixed(3)})</div>`;
                 });
             }
             if (si.iComponents.length > 0) {
-                siHtml += `<div style="font-size: 0.7rem; color: var(--accent-yellow); margin-top: 4px;">I Bilesenleri:</div>`;
+                siHtml += `<div style="font-size: 0.7rem; color: var(--accent-yellow); margin-top: 4px;">I Bileşenleri:</div>`;
                 si.iComponents.forEach((ic) => {
                     siHtml += `<div style="font-size: 0.7rem; color: var(--text-muted); padding-left: 8px;">"${ic}..."</div>`;
                 });
@@ -274,7 +304,7 @@ class GameController {
 
         // --- Detection & Forensics ---
         const detectDiv = document.getElementById("detectionResult");
-        let detectHtml = `<div class="result-label">TESPIT ANALIZI (CorruptRAG Stealth + RAGForensics)</div>`;
+        let detectHtml = `<div class="result-label">TESPİT ANALİZİ (CorruptRAG Stealth + RAGForensics)</div>`;
         detectHtml += `<div class="result-value">Stealth Skoru: `;
 
         if (result.stealthScore >= 80) {
@@ -293,12 +323,12 @@ class GameController {
             });
             detectHtml += `</ul>`;
         } else {
-            detectHtml += `<div class="result-value green">Hicbir tespit mekanizmasi tetiklenmedi.</div>`;
+            detectHtml += `<div class="result-value green">Hiçbir tespit mekanizması tetiklenmedi.</div>`;
         }
 
         // Forensic flags (RAGForensics / RevPRAG)
         if (result.forensicFlags && result.forensicFlags.length > 0) {
-            detectHtml += `<div style="margin-top: 8px;"><div class="result-label" style="color: var(--accent-yellow);">FORENSIK BULGULAR (RAGForensics/RevPRAG)</div>`;
+            detectHtml += `<div style="margin-top: 8px;"><div class="result-label" style="color: var(--accent-yellow);">FORENSİK BULGULAR (RAGForensics/RevPRAG)</div>`;
             detectHtml += `<ul style="margin-left: 16px; font-size: 0.75rem; color: var(--accent-yellow);">`;
             result.forensicFlags.forEach((f) => {
                 detectHtml += `<li>${f}</li>`;
@@ -313,7 +343,7 @@ class GameController {
         const flagDiv = document.getElementById("flagResult");
         if (result.success) {
             let flagHtml = `<div class="result-label">SALDIRI BASARILI</div>`;
-            flagHtml += `<div class="result-value purple">Flag: ${challenge.flag}</div>`;
+            flagHtml += `<div class="result-value purple">Ödül Kodu: ${this.getAwardToken(challenge)}</div>`;
             flagHtml += `<div class="result-value green">+${result.points} puan`;
             if (result.bonusPoints > 0) {
                 flagHtml += ` | +${result.bonusPoints} bonus`;
@@ -327,36 +357,36 @@ class GameController {
                 }
             }
             flagHtml += `</div>`;
-            flagHtml += `<br><div class="result-value">Mevcut puan: ${this.state.totalScore} | Flag'ler: ${this.state.flags.map((f) => f.flag).join(", ")}</div>`;
+            flagHtml += `<br><div class="result-value">Mevcut puan: ${this.state.totalScore} | Ödüller: ${this.state.flags.map((f) => f.flag).join(", ")}</div>`;
             flagDiv.innerHTML = flagHtml;
             flagDiv.className = "result-section flag";
         } else {
             const attempts = this.engine.getAttemptCount(challenge.id);
-            let failHtml = `<div class="result-label">SALDIRI BASARISIZ</div>`;
-            failHtml += `<div class="result-value red">Zehirli icerik hedef etkiyi yaratamadi.</div>`;
+            let failHtml = `<div class="result-label">SALDIRI BAŞARISIZ</div>`;
+            failHtml += `<div class="result-value red">Zehirli içerik hedef etkiyi yaratamadı.</div>`;
 
             // Contextual feedback based on S+I analysis
             if (!result.retrieved) {
-                failHtml += `<div class="result-value yellow">Retrieval Condition basarisiz: Belgeniz hedef sorguyla yeterince benzer degil. S bileseni (retrieval substring) guclendirilmeli.</div>`;
+                failHtml += `<div class="result-value yellow">Retrieval Condition başarısız: Belgeniz hedef sorguyla yeterince benzer değil. S bileşeni (retrieval substring) güçlendirilmeli.</div>`;
             } else if (!result.contentMatch) {
-                failHtml += `<div class="result-value yellow">Generation Condition basarisiz: Belge cekildi ancak hedef yanlis bilgiyi icermiyor. I bileseni (hedef icerik) eklenmeli.</div>`;
+                failHtml += `<div class="result-value yellow">Generation Condition başarısız: Belge çekildi ancak hedef yanlış bilgiyi içermiyor. I bileşeni (hedef içerik) eklenmeli.</div>`;
             } else if (result.detected) {
-                failHtml += `<div class="result-value yellow">Guardrail Bypass basarisiz: Tespit mekanizmasi belgeyi reddetti. CorruptRAG yaklasimi ile daha stealthy icerik olusturun.</div>`;
+                failHtml += `<div class="result-value yellow">Guardrail Bypass başarısız: Tespit mekanizması belgeyi reddetti. CorruptRAG yaklaşımı ile daha stealth içerik oluşturun.</div>`;
             }
 
             if (result.siAnalysis) {
                 const si = result.siAnalysis;
                 if (si.quality === "retrieval-only") {
-                    failHtml += `<div class="result-value yellow">S+I Analizi: S bileseni var ama I (hedef yanlis bilgi) eksik.</div>`;
+                    failHtml += `<div class="result-value yellow">S+I Analizi: S bileşeni var ama I (hedef yanlış bilgi) eksik.</div>`;
                 } else if (si.quality === "generation-only") {
-                    failHtml += `<div class="result-value yellow">S+I Analizi: I bileseni var ama S (retrieval benzerlik) eksik. Hedef sorgudan terimleri belgeye ekleyin.</div>`;
+                    failHtml += `<div class="result-value yellow">S+I Analizi: I bileşeni var ama S (retrieval benzerlik) eksik. Hedef sorgudan terimleri belgeye ekleyin.</div>`;
                 } else if (si.quality === "ineffective") {
-                    failHtml += `<div class="result-value yellow">S+I Analizi: Hem S hem I bilesenleri eksik. Hedef sorguya benzer terimler VE hedef yanlis bilgiyi iceren icerik yazin.</div>`;
+                    failHtml += `<div class="result-value yellow">S+I Analizi: Hem S hem I bileşenleri eksik. Hedef sorguya benzer terimler VE hedef yanlış bilgiyi içeren içerik yazın.</div>`;
                 }
             }
 
             if (attempts >= 2 && !this.state.hintUsed[challenge.id]) {
-                failHtml += `<br><div class="result-value yellow">Ipucu kullanmayi deneyin.</div>`;
+                failHtml += `<br><div class="result-value yellow">İpucu kullanmayı deneyin.</div>`;
             }
 
             failHtml += `<br><div class="result-value">Deneme: ${attempts} | Mevcut puan: ${this.state.totalScore}</div>`;
@@ -386,10 +416,10 @@ class GameController {
 
         if (nextLevel) {
             const proceed = confirm(
-                `${levelNames[currentLevel]} seviye tamamlandi!\n` +
+                `${levelNames[currentLevel]} seviye tamamlandı!\n` +
                 `Mevcut puan: ${this.state.totalScore}\n` +
-                `Toplanan flag: ${this.state.flags.length}\n\n` +
-                `${levelNames[nextLevel]} seviyeye gecmek ister misiniz?`
+                `Toplanan ödül: ${this.state.flags.length}\n\n` +
+                `${levelNames[nextLevel]} seviyeye geçmek ister misiniz?`
             );
 
             if (proceed) {
@@ -432,7 +462,7 @@ class GameController {
         document.getElementById("flagsList").innerHTML =
             this.state.flags.length > 0
                 ? flagsHtml
-                : '<div class="flag-item"><span style="color: var(--text-muted);">Henuz flag toplanmadi.</span></div>';
+                : '<div class="flag-item"><span style="color: var(--text-muted);">Henüz ödül toplanmadı.</span></div>';
     }
 
     calculateRank() {
@@ -442,32 +472,32 @@ class GameController {
         if (score >= 2000 && flags >= 8) {
             return {
                 title: "SHADOW OPERATOR",
-                description: "RAG sistemlerinin en karanlik koselerini biliyorsunuz. Hicbir guardrail sizi durduramaz. Siz bir hayaletsiniz."
+                description: "RAG sistemlerinin en karanlık köşelerini biliyorsunuz. Hiçbir guardrail sizi durduramaz. Siz bir hayaletsiniz."
             };
         } else if (score >= 1500 && flags >= 6) {
             return {
                 title: "ELITE POISONER",
-                description: "Ileri seviye RAG zehirleme teknikleri konusunda ustasınız. Kurumsal RAG sistemleri sizin icin bir oyun alani."
+                description: "İleri seviye RAG zehirleme teknikleri konusunda ustasınız. Kurumsal RAG sistemleri sizin için bir oyun alanı."
             };
         } else if (score >= 1000 && flags >= 4) {
             return {
                 title: "ADVANCED INJECTOR",
-                description: "RAG zehirleme konusunda saglam bir temele sahipsiniz. Orta ve ileri seviye saldirilari basariyla gerceklestirdiniz."
+                description: "RAG zehirleme konusunda sağlam bir temele sahipsiniz. Orta ve ileri seviye saldırıları başarıyla gerçekleştirdiniz."
             };
         } else if (score >= 500 && flags >= 2) {
             return {
                 title: "KNOWLEDGE CORRUPTOR",
-                description: "RAG sistemlerinin temel zayifliklarini anliyor ve basit saldirilari gerceklestirebiliyorsunuz."
+                description: "RAG sistemlerinin temel zayıflıklarını anlıyor ve basit saldırıları gerçekleştirebiliyorsunuz."
             };
         } else if (flags >= 1) {
             return {
                 title: "NOVICE INJECTOR",
-                description: "RAG zehirleme dnyasina ilk adiminizi attiniz. Daha fazla pratik yaparak seviyenizi yukseltebilirsiniz."
+                description: "RAG zehirleme dünyasına ilk adımınızı attınız. Daha fazla pratik yaparak seviyenizi yükseltebilirsiniz."
             };
         } else {
             return {
                 title: "OBSERVER",
-                description: "Henuz basarili bir saldiri gerceklestiremediniz. Ipuclarini dikkatli okuyun ve tekrar deneyin."
+                description: "Henüz başarılı bir saldırı gerçekleştiremediniz. İpuçlarını dikkatli okuyun ve tekrar deneyin."
             };
         }
     }
