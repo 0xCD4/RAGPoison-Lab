@@ -1,0 +1,14 @@
+challenges.js
+engine.js
+game.js
+index.html
+particles.js
+style.css
+smoke-check.js
+package.json
+package-lock.json
+node_modules/
+validate.js
+validation_output.txt
+dist/
+*.log
