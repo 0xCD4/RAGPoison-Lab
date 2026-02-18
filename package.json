@@ -1,0 +1,18 @@
+{
+  "name": "ragpoison-lab-codex-check-if-all-control-codes-work",
+  "version": "1.0.0",
+  "description": "AI Security CTF game focused on RAG (Retrieval-Augmented Generation) poisoning attacks.",
+  "main": "challenges.js",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node smoke-check.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}
