@@ -6,14 +6,74 @@
 class GameController {
     constructor() {
         this.engine = new RAGEngine();
+        this.globalStats = this.loadGlobalStats();
         this.state = {
             currentLevel: null,
             currentChallengeIndex: 0,
             totalScore: 0,
             flags: [],
             completedChallenges: new Set(),
-            hintUsed: {}
+            hintUsed: {},
+            sessionStats: {}
         };
+    }
+
+    loadGlobalStats() {
+        const fallback = { totalAttempts: 0, totalSuccesses: 0, challenges: {} };
+        try {
+            const raw = localStorage.getItem("ragshadowmaster_stats");
+            if (!raw) return fallback;
+            const parsed = JSON.parse(raw);
+            return {
+                totalAttempts: parsed.totalAttempts || 0,
+                totalSuccesses: parsed.totalSuccesses || 0,
+                challenges: parsed.challenges || {}
+            };
+        } catch (_) {
+            return fallback;
+        }
+    }
+
+    saveGlobalStats() {
+        localStorage.setItem("ragshadowmaster_stats", JSON.stringify(this.globalStats));
+    }
+
+    trackStats(challengeId, success) {
+        if (!this.state.sessionStats[challengeId]) {
+            this.state.sessionStats[challengeId] = { attempts: 0, successes: 0 };
+        }
+        if (!this.globalStats.challenges[challengeId]) {
+            this.globalStats.challenges[challengeId] = { attempts: 0, successes: 0 };
+        }
+
+        this.state.sessionStats[challengeId].attempts++;
+        this.globalStats.challenges[challengeId].attempts++;
+        this.globalStats.totalAttempts++;
+
+        if (success) {
+            this.state.sessionStats[challengeId].successes++;
+            this.globalStats.challenges[challengeId].successes++;
+            this.globalStats.totalSuccesses++;
+        }
+
+        this.saveGlobalStats();
+    }
+
+    renderStatsHint(challengeId) {
+        const session = this.state.sessionStats[challengeId] || { attempts: 0, successes: 0 };
+        const global = this.globalStats.challenges[challengeId] || { attempts: 0, successes: 0 };
+        const successRate = global.attempts > 0
+            ? Math.round((global.successes / global.attempts) * 100)
+            : 0;
+
+        const statsEl = document.getElementById("challengeStats");
+        if (!statsEl) return;
+
+        statsEl.innerHTML =
+            `Bu challenge için deneme istatistiği (yerel tarayıcı): ` +
+            `Bu oturum <strong>${session.attempts}</strong> deneme / <strong>${session.successes}</strong> başarı · ` +
+            `Toplam <strong>${global.attempts}</strong> deneme / <strong>${global.successes}</strong> başarı ` +
+            `(<strong>%${successRate}</strong> başarı oranı).`;
     }
 
 
@@ -126,6 +186,7 @@ class GameController {
         }
 
         this.updateScoreDisplay();
+        this.renderStatsHint(ch.id);
     }
 
     formatDescription(desc) {
@@ -221,6 +282,8 @@ class GameController {
         // Run simulation
         const poisonDoc = { title, content };
         const result = this.engine.evaluateAttack(ch, poisonDoc);
+        this.trackStats(ch.id, result.success);
+        this.renderStatsHint(ch.id);
 
         // Display results
         this.displayResults(ch, result);
@@ -451,6 +514,11 @@ class GameController {
         document.getElementById("finalRank").textContent = rank.title;
         document.getElementById("finalScore").textContent = `Toplam Puan: ${this.state.totalScore}`;
         document.getElementById("rankDescription").textContent = rank.description;
+        const avgAttempts = this.globalStats.totalSuccesses > 0
+            ? (this.globalStats.totalAttempts / this.globalStats.totalSuccesses).toFixed(2)
+            : "0.00";
+        const globalStatsText = `Toplam İstatistik (yerel): ${this.globalStats.totalAttempts} deneme, ${this.globalStats.totalSuccesses} başarı, başarı başına ortalama ${avgAttempts} deneme.`;
+        document.getElementById("globalStatsSummary").textContent = globalStatsText;
 
         const flagsHtml = this.state.flags
             .map(
@@ -533,7 +601,8 @@ class GameController {
             totalScore: 0,
             flags: [],
             completedChallenges: new Set(),
-            hintUsed: {}
+            hintUsed: {},
+            sessionStats: {}
         };
         this.engine = new RAGEngine();
         this.updateScoreDisplay();

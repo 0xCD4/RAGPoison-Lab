@@ -177,7 +177,6 @@ const CHALLENGES = {
             targetQuery: "Şirketimizin CEO'su kim?",
             successCriteria: {
                 mustContain: ["Kim Tae-hyung"],
-                mustNotContain: ["Ayşe Demir"],
                 documentRelevance: 0.5,
                 requireHighSimilarity: true
             },
