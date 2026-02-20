@@ -58,6 +58,32 @@ Toplam 9 challenge, 3 zorluk seviyesi:
 
 ---
 
+
+## Zorluk Nasıl Derecelendiriliyor?
+
+Zorluk seviyesi tek bir kritere göre değil, aşağıdaki kombinasyona göre belirlenir:
+
+- **Hedefin hassasiyeti**: Değiştirilen bilginin etkisi ne kadar kritik?
+- **Retrieval dayanıklılığı**: Zehirli belgenin top-K sonuçlarına girme zorluğu
+- **Guardrail seviyesi**: Injection/tutarlılık kontrollerinin katılığı
+- **Başarı koşulu**: Yalnızca yanlış yanıt değil, bazı senaryolarda stealth/forensic koşulları da gerekir
+
+> Not: Aynı seviyedeki challenge'lar farklı beceriler ölçtüğü için zorluk algısı kişiden kişiye değişebilir. Örneğin **Orta 1 (CEO bilgisi)** bazı oyuncular için Orta 2/3'ten daha zor gelebilir.
+
+## İstatistik ve Dengeleme Notu
+
+Platform şu an tamamen tarayıcıda çalıştığı için varsayılan kurulumda merkezi (sunucu tarafı) kullanıcı istatistiği toplanmaz.
+
+Bu nedenle dengeleme kararları çoğunlukla şu kaynaklarla yapılır:
+
+- Challenge tasarım kriterleri (hedef hassasiyeti, retrieval eşiği, guardrail seviyesi)
+- Test ve geri bildirimlerde görülen deneme sayısı/takılma noktaları
+- İpucu kullanım eğilimleri (senaryo bazlı gözlem)
+
+Amaç, beklenenden zor kalan soruları tespit edip revize etmektir.
+
+---
+
 ## Puanlama
 
 | Aksiyon                    | Puan |
